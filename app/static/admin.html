@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #1e293b; color: white; padding: 40px; }
+        .container { max-width: 800px; margin: auto; }
+        h1 { color: #38bdf8; }
+        .ticket { background: #334155; padding: 15px; margin-bottom: 15px; border-radius: 8px; border-left: 5px solid #f59e0b; display: flex; justify-content: space-between; align-items: center; }
+        .ticket.resolved { border-left-color: #10b981; opacity: 0.7; }
+        button { background: #10b981; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        button:hover { background: #059669; }
+        button:disabled { background: #64748b; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Government Admin Dashboard</h1>
+    <p>Review and resolve citizen complaints.</p>
+    <div id="admin-list"></div>
+</div>
+<script>
+    async function loadTickets() {
+        const res = await fetch('/complaints');
+        const data = await res.json();
+        const list = document.getElementById('admin-list');
+        list.innerHTML = '';
+
+        data.forEach(c => {
+            const div = document.createElement('div');
+            div.className = `ticket ${c.status === 'RESOLVED' ? 'resolved' : ''}`;
+            div.innerHTML = `
+                <div>
+                    <strong>#${c.id} - ${c.title}</strong><br>
+                    ${c.description}
+                </div>
+                <div>
+                    ${c.status === 'OPEN' ? `<button onclick="resolve(${c.id})">Mark Resolved</button>` : `<span>✅ Resolved</span>`}
+                </div>
+            `;
+            list.appendChild(div);
+        });
+    }
+
+    async function resolve(id) {
+        await fetch(`/complaints/${id}/resolve`, { method: 'PATCH' });
+        loadTickets();
+    }
+
+    loadTickets();
+</script>
+</body>
+</html>

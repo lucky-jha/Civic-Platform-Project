@@ -1,7 +1,31 @@
-.venv/
+# Python
 __pycache__/
-*.pyc
+*.py[cod]
+*.egg-info/
+*.db
+.venv/
+venv/
 .pytest_cache/
+.mypy_cache/
 .ruff_cache/
-*.log
+.coverage
+htmlcov/
+
+# Env / secrets — NEVER bake into the image
 .env
+.env.*
+
+# IDE / OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
+
+# Tests / docs (optional — smaller image)
+tests/
+docs/
+*.md
+
+# Docker itself
+Dockerfile
+.dockerignore
